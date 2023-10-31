@@ -11,7 +11,7 @@ function largestNumber(num1, num2, num3) {
     largestNum = "Error";
   }
 
-  console.log(`The largest number is ${largestNum}`);
+  console.log(`The largest number is ${largestNum}.`);
 }
 
 largestNumber(1, "a", 1);
