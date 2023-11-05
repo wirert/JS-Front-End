@@ -2,7 +2,7 @@ function isPerfectNumber(num) {
   const end = Math.floor(num / 2);
   let sumOfDividers = 0;
   for (let i = 1; i <= end; i++) {
-    if (num % i == 0) {
+    if (num % i === 0) {
       sumOfDividers += i;
     }
   }

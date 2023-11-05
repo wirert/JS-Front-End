@@ -1,11 +1,9 @@
 function solve(num) {
-  const arrNums = num
-    .toString()
-    .split("")
-    .map((n) => Number(n));
+  const arrNums = num.toString().split("").map(Number);
 
   let sum = arrNums.reduce(
-    (accumulator, currentValue) => accumulator + currentValue
+    (accumulator, currentValue) => accumulator + currentValue,
+    0
   );
 
   while (sum / arrNums.length <= 5) {
