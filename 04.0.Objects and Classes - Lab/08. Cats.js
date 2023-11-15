@@ -12,8 +12,7 @@ function printCatsInfo(input) {
 
   input.map((catInfoStr) => {
     catInput = catInfoStr.split(" ");
-    let name = catInput[0];
-    let age = catInput[1];
+    let [name, age] = catInput;
     let cat = new Cat(name, age);
     cat.meow();
   });
