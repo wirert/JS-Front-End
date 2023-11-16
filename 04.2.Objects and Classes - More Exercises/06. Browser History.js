@@ -1,4 +1,4 @@
-function solve(browserHistory, inputArr) {
+function printBrowserHistory(browserHistory, inputArr) {
   for (const text of inputArr) {
     let [action, ...rest] = text.split(" ");
     const site = rest.join(" ");
@@ -32,7 +32,7 @@ function solve(browserHistory, inputArr) {
   });
 }
 
-solve(
+printBrowserHistory(
   {
     "Browser Name": "Mozilla Firefox",
     "Open Tabs": ["YouTube"],
