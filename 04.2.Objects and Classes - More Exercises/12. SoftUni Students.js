@@ -7,7 +7,10 @@ function storeSoftUniStudents(input) {
       addStudent(student) {
         if (this.capacity > this.students.length) {
           this.students.push(student);
+          return true;
         }
+
+        return false;
       },
     };
   }
@@ -52,8 +55,8 @@ function storeSoftUniStudents(input) {
         students.push(student);
       }
       const course = courses.find((c) => c.name === courseName);
-      if (course && student.addCourse(course)) {
-        course.addStudent(student);
+      if (course && !student.isInCourse(course) && course.addStudent(student)) {
+        student.addCourse(course);
       }
     },
   };

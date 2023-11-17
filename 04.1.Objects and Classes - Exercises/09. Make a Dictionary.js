@@ -1,15 +1,24 @@
 function printDictionary(input) {
-  const result = input.reduce((acc, curr) => {
-    const wordArr = Object.entries(JSON.parse(curr));
-    let [word, meaning] = wordArr[0];
-    acc[word] = meaning;
-    return acc;
-  }, {});
-  Object.keys(result)
+  // const dictionary = input.reduce((acc, curr) => {
+  //   const wordArr = Object.entries(JSON.parse(curr));
+  //   let [word, meaning] = wordArr[0];
+  //   acc[word] = meaning;
+  //   return acc;
+  // }, {});
+
+  const dictionary = input
+    .map((t) => JSON.parse(t))
+    .reduce((acc, curr) => {
+      return {
+        ...acc,
+        ...curr,
+      };
+    }, {});
+  Object.keys(dictionary)
     .sort()
-    .forEach((word) => {
-      console.log(`Term: ${word} => Definition: ${result[word]}`);
-    });
+    .forEach((word) =>
+      console.log(`Term: ${word} => Definition: ${dictionary[word]}`)
+    );
 }
 
 printDictionary([

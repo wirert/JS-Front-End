@@ -1,4 +1,4 @@
-function printFlightStatus(input) {
+function printFlightStatus([inputFlights, flightChanges, [neededStatus]]) {
   class Flight {
     constructor(destination) {
       this.destination = destination;
@@ -6,21 +6,21 @@ function printFlightStatus(input) {
     }
   }
 
-  let flights = input[0].reduce((acc, curr) => {
+  let flights = inputFlights.reduce((acc, curr) => {
     let [flightNo, ...arr] = curr.split(" ");
     const destination = arr.join(" ");
     acc[flightNo] = new Flight(destination);
     return acc;
   }, {});
 
-  for (const string of input[1]) {
+  for (const string of flightChanges) {
     let [flightNo, ...arr] = string.split(" ");
     const newStatus = arr.join(" ");
     if (flights[flightNo]) {
       flights[flightNo].status = newStatus;
     }
   }
-  const neededStatus = input[2].toString();
+
   Object.values(flights)
     .filter((flight) => {
       return flight.status === neededStatus;

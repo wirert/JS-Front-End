@@ -4,22 +4,15 @@ function printCarsInParking(input) {
     if (action === "IN") {
       acc[carNumber] = carNumber;
     } else {
-      acc[carNumber] = undefined;
+      delete acc[carNumber];
     }
     return acc;
   }, {});
-  let result = Object.values(parking)
-    .filter((number) => {
-      return number !== undefined;
-    })
-    .sort();
+  let result = Object.values(parking).sort();
 
-  if (result.length === 0) {
-    console.log("Parking Lot is Empty");
-    return;
-  }
-
-  console.log(result.join("\n"));
+  result.length === 0
+    ? console.log("Parking Lot is Empty")
+    : console.log(result.join("\n"));
 }
 
 printCarsInParking([

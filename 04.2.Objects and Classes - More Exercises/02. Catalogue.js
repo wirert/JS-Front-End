@@ -1,8 +1,7 @@
 function printProductCatalogue(input) {
   const catalogue = input.reduce((acc, curr) => {
-    let [name, priceStr] = curr.split(" : ");
-    let price = Number(priceStr);
-    acc[name] = price;
+    let [name, price] = curr.split(" : ");
+    acc[name] = Number(price);
     return acc;
   }, {});
 
@@ -12,7 +11,7 @@ function printProductCatalogue(input) {
   let currLetter;
   for (const productName of sortedProductNames) {
     if (!productName.startsWith(currLetter)) {
-      currLetter = productName.substring(0, 1);
+      currLetter = productName[0];
       console.log(currLetter);
     }
     const productPrice = catalogue[productName];
