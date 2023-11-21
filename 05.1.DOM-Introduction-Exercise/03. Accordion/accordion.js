@@ -1,10 +1,11 @@
 function toggle() {
-  let buttonText = document.querySelector("span.button").textContent;
-  if (buttonText === "More") {
-    document.querySelector("span.button").textContent = "Less";
-    document.querySelector("#extra").style.display = "block";
+  let button = document.querySelector("span.button");
+  let text = document.querySelector("#extra");
+  if (button.textContent === "More") {
+    button.textContent = "Less";
+    text.style.display = "block";
   } else {
-    document.querySelector("span.button").textContent = "More";
-    document.querySelector("#extra").style.display = "none";
+    button.textContent = "More";
+    text.style.display = "none";
   }
 }
