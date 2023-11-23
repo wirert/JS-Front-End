@@ -8,9 +8,9 @@ function solve() {
   let resultP = document.querySelector("#check p");
   let table = document.querySelector("table");
   let cells = Array.from(document.querySelectorAll("tbody td input"));
-  let neededSum = 0;
+  let neededSumOnElements = 0;
   for (let i = 1; i <= 9; i++) {
-    neededSum += i;
+    neededSumOnElements += i;
   }
 
   function clearTable() {
@@ -39,7 +39,7 @@ function solve() {
     for (const cell of cells) {
       curRow.push(cell.value);
       if (curRow.length === 9) {
-        if (new Set([...curRow]).size < 9) {
+        if (areRowValuesValid(curRow) == false) {
           return false;
         }
         elements.push([...curRow]);
@@ -47,21 +47,28 @@ function solve() {
       }
     }
 
-    if (checkSubMatrices(elements) == false || checkCols(elements) == false) {
+    if (
+      areSubmatricesValuesValid(elements) == false ||
+      areColsValuesValid(elements) == false
+    ) {
       return false;
     }
 
     return true;
   }
 
-  function checkCols(elements) {
+  function areRowValuesValid(row) {
+    return new Set([...row]).size < 9;
+  }
+
+  function areColsValuesValid(elements) {
     for (let col = 0; col < 9; col++) {
       let sum = 0;
       for (let row = 0; row < 9; row++) {
         sum += Number(elements[row][col]);
       }
 
-      if (sum !== neededSum) {
+      if (sum !== neededSumOnElements) {
         return false;
       }
     }
@@ -69,17 +76,16 @@ function solve() {
     return true;
   }
 
-  function checkSubMatrices(elements) {
-    let sum = 0;
-    for (let i = 0; i < 9; i += 3) {
-      for (let j = 0; j < 9; j += 3) {
-        let sum = 0;
-        for (let row = i; row < i + 3; row++) {
-          for (let col = j; col < j + 3; col++) {
-            sum += Number(elements[row][col]);
+  function areSubmatricesValuesValid(elements) {
+    for (let rowStep = 0; rowStep < 9; rowStep += 3) {
+      for (let colStep = 0; colStep < 9; colStep += 3) {
+        let elementsSum = 0;
+        for (let row = rowStep; row < rowStep + 3; row++) {
+          for (let col = colStep; col < colStep + 3; col++) {
+            elementsSum += Number(elements[row][col]);
           }
         }
-        if (sum !== neededSum) {
+        if (elementsSum !== neededSumOnElements) {
           return false;
         }
       }
