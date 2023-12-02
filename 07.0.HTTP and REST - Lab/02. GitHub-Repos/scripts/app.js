@@ -1,8 +1,11 @@
 async function loadRepos() {
-  let res = await fetch("https://api.github.com/users/testnakov/repos");
-
-  let repos = await res.text();
-
   let resDiv = document.getElementById("res");
-  resDiv.textContent = repos;
+  try {
+    let res = await fetch("https://api.github.com/users/testnakov/repos1");
+    let repos = await res.text();
+
+    resDiv.textContent = repos;
+  } catch (error) {
+    resDiv.textContent = error.text;
+  }
 }
