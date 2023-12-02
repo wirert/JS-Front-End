@@ -14,26 +14,26 @@ function solve() {
   }
 
   function buyCheckedFurnitures() {
-    let cart = Array.from(document.querySelectorAll("input"))
-      .filter((input) => input.checked)
-      .reduce(
-        (acc, curr) => {
-          let [name, price, decFactor] = Array.from(
-            curr.parentElement.parentElement.querySelectorAll("p")
-          );
-          acc.names.push(name.textContent);
-          acc.totalPrice += Number(price.textContent);
-          acc.totalDecFactor += Number(decFactor.textContent);
+    let cart = Array.from(document.querySelectorAll("input:checked")).reduce(
+      (acc, curr) => {
+        let [name, price, decFactor] = Array.from(
+          curr.parentElement.parentElement.querySelectorAll("p")
+        );
+        acc.names.push(name.textContent);
+        acc.totalPrice += Number(price.textContent);
+        acc.totalDecFactor += Number(decFactor.textContent);
+
+        return acc;
+      },
+      {
+        names: [],
+        totalPrice: 0,
+        totalDecFactor: 0,
+        avFactor() {
+          return this.totalDecFactor / this.names.length;
         },
-        {
-          names: [],
-          totalPrice: 0,
-          totalDecFactor: 0,
-          avFactor() {
-            return this.totalDecFactor / this.names.length;
-          },
-        }
-      );
+      }
+    );
 
     ouputTextArea.value = `Bought furniture: ${cart.names.join(
       ", "
@@ -54,7 +54,7 @@ function solve() {
   }
 
   const createCell = {
-    addToTd(element) {
+    addToCell(element) {
       let td = document.createElement("td");
       td.appendChild(element);
       return td;
@@ -62,17 +62,17 @@ function solve() {
     createImg(src) {
       let imgEl = document.createElement("img");
       imgEl.src = src;
-      return this.addToTd(imgEl);
+      return this.addToCell(imgEl);
     },
     createContentCell(text) {
       let p = document.createElement("p");
       p.textContent = text;
-      return this.addToTd(p);
+      return this.addToCell(p);
     },
     createCheckBoxCell() {
       let checkBox = document.createElement("input");
       checkBox.type = "checkbox";
-      return this.addToTd(checkBox);
+      return this.addToCell(checkBox);
     },
   };
 }
