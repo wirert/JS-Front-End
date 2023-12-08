@@ -35,7 +35,9 @@ function createHeadElements(article) {
   button.id = article._id;
   button.classList.add("button");
   button.textContent = "More";
+
   button.addEventListener("click", showHideContent);
+
   head.appendChild(button);
 
   return head;
