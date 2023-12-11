@@ -26,7 +26,7 @@ function solve() {
     if (formData === null) {
       return;
     }
-    clearFormData();
+
     let articleNumber = tasksSection.children.length - 1;
     const taskArticle = createAndFillTaskArticle(formData, articleNumber);
     tasksSection.appendChild(taskArticle);
@@ -39,6 +39,7 @@ function solve() {
 
     delBtn.addEventListener("click", loadConfirmDelete);
 
+    clearFormData();
     updateTotalPoints();
   }
 
@@ -99,7 +100,9 @@ function solve() {
 
   function changeInputWritability(value) {
     let inputs = Array.from(
-      document.querySelectorAll("input, textarea, select")
+      document.querySelectorAll(
+        "#form-section input, #form-section textarea, #form-section select"
+      )
     );
     inputs.forEach((input) => (input.disabled = value));
   }
@@ -135,7 +138,12 @@ function solve() {
   function createDomElement(type, content, ...classes) {
     const element = document.createElement(type);
     element.classList.add(...classes);
-    element.innerHTML = content;
+    if (classes.includes("task-card-label")) {
+      element.innerHTML = content;
+    } else {
+      element.textContent = content;
+    }
+
     return element;
   }
 
@@ -157,7 +165,7 @@ function solve() {
     document.querySelector("#label").value = "";
     document.querySelector("#points").value = "";
     document.querySelector("#assignee").value = "";
-    document.querySelector("#task-id").value = "";
+    //document.querySelector("#task-id").value = "";
   }
 
   function updateTotalPoints() {
