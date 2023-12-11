@@ -2,6 +2,7 @@ function motoGp(input) {
   const n = Number(input.shift());
   const racerInfo = input.slice(0, n);
   const commands = input.splice(n, input.length - n);
+
   const race = racerInfo.reduce(
     (acc, curr) => {
       const [name, fuel, position] = curr.split("|");
