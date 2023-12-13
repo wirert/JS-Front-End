@@ -38,14 +38,15 @@ function solve(input) {
       console.log(`What a miracle - ${first} becomes first.`);
     },
   };
-
-  input.forEach((line) => {
+  while (input.length > 0) {
+    line = input.shift();
     if (line === "Finish") {
-      return printResult();
+      printResult();
+      break;
     }
     const [command, ...params] = line.split(" ");
     commands[command](...params);
-  });
+  }
 
   function printResult() {
     console.log(horses.join("->"));
