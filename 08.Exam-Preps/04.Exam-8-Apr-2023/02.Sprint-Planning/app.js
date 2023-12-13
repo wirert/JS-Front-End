@@ -3,6 +3,14 @@ window.addEventListener("load", solve);
 function solve() {
   const createTaskBtn = document.querySelector("#create-task-btn");
   const deleteTaskBtn = document.querySelector("#delete-task-btn");
+  const form = document.querySelector("#create-task-form");
+  const inputs = {
+    title: document.querySelector("#title"),
+    description: document.querySelector("#description"),
+    lable: document.querySelector("#label"),
+    points: document.querySelector("#points"),
+    assignee: document.querySelector("#assignee"),
+  };
 
   createTaskBtn.addEventListener("click", createTask);
   deleteTaskBtn.addEventListener("click", deleteTask);
@@ -39,7 +47,7 @@ function solve() {
 
     delBtn.addEventListener("click", loadConfirmDelete);
 
-    clearFormData();
+    form.reset();
     updateTotalPoints();
   }
 
@@ -48,19 +56,25 @@ function solve() {
     const taskForRemove = document.querySelector(`#${taskId}`);
     const tasksSection = document.querySelector("#tasks-section");
     tasksSection.removeChild(taskForRemove);
-    clearFormData();
+    form.reset();
     changeInputWritability(false);
     deleteTaskBtn.disabled = true;
+    createTaskBtn.disabled = false;
 
     updateTotalPoints();
   }
 
   function loadConfirmDelete(e) {
+    if (inputs.title.value) {
+      return;
+    }
+
     let articleForDel = e.currentTarget.parentElement.parentElement;
     fillFormDataForDelete(articleForDel);
 
     changeInputWritability(true);
     deleteTaskBtn.disabled = false;
+    createTaskBtn.disabled = true;
   }
 
   function createAndFillTaskArticle(formData, articleNumber) {
@@ -99,38 +113,32 @@ function solve() {
   }
 
   function changeInputWritability(value) {
-    let inputs = Array.from(
-      document.querySelectorAll(
-        "#form-section input, #form-section textarea, #form-section select"
-      )
-    );
-    inputs.forEach((input) => (input.disabled = value));
+    Object.values(inputs).forEach((input) => (input.disabled = value));
   }
 
   function fillFormDataForDelete(articleForDel) {
-    document.querySelector("#title").value =
+    inputs.title.value =
       articleForDel.querySelector(".task-card-title").textContent;
-    document.querySelector("#description").value = articleForDel.querySelector(
+    inputs.description.value = articleForDel.querySelector(
       ".task-card-description"
     ).textContent;
 
     const labelContent =
       articleForDel.querySelector(".task-card-label").textContent;
-
     const label = labelContent.split(" ");
     label.pop();
-    document.querySelector("#label").value = label.join(" ");
+    inputs.lable.value = label.join(" ");
 
     const pointsContent = articleForDel
       .querySelector(".task-card-points")
       .textContent.split(" ");
     const points = pointsContent[2].substring(length - 3);
-    document.querySelector("#points").value = Number(points);
+    inputs.points.value = Number(points);
 
     const assignee = articleForDel
       .querySelector(".task-card-assignee")
       .textContent.split(": ")[1];
-    document.querySelector("#assignee").value = assignee;
+    inputs.assignee.value = assignee;
 
     document.querySelector("#task-id").value = articleForDel.id;
   }
@@ -150,22 +158,13 @@ function solve() {
   function getFormData() {
     const formData = {};
 
-    formData.title = document.querySelector("#title").value;
-    formData.description = document.querySelector("#description").value;
-    formData.label = document.querySelector("#label").value;
-    formData.points = document.querySelector("#points").value;
-    formData.assignee = document.querySelector("#assignee").value;
+    formData.title = inputs.title.value;
+    formData.description = inputs.description.value;
+    formData.label = inputs.lable.value;
+    formData.points = inputs.points.value;
+    formData.assignee = inputs.assignee.value;
 
     return Object.values(formData).some((value) => !value) ? null : formData;
-  }
-
-  function clearFormData() {
-    document.querySelector("#title").value = "";
-    document.querySelector("#description").value = "";
-    document.querySelector("#label").value = "";
-    document.querySelector("#points").value = "";
-    document.querySelector("#assignee").value = "";
-    //document.querySelector("#task-id").value = "";
   }
 
   function updateTotalPoints() {
