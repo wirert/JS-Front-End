@@ -1,110 +1,120 @@
 window.addEventListener("load", solve);
 
 function solve() {
-  const createTaskBtn = document.querySelector("#create-task-btn");
-  const deleteTaskBtn = document.querySelector("#delete-task-btn");
-  const form = document.querySelector("#create-task-form");
   const inputs = {
+    id: document.querySelector("#task-id"),
     title: document.querySelector("#title"),
     description: document.querySelector("#description"),
-    lable: document.querySelector("#label"),
+    label: document.querySelector("#label"),
     points: document.querySelector("#points"),
     assignee: document.querySelector("#assignee"),
   };
-
-  createTaskBtn.addEventListener("click", createTask);
-  deleteTaskBtn.addEventListener("click", deleteTask);
-
-  const labelSymbol = {
+  const selections = {
+    createTaskBtn: document.querySelector("#create-task-btn"),
+    deleteTaskBtn: document.querySelector("#delete-task-btn"),
+    form: document.querySelector("#create-task-form"),
+    tasksSection: document.querySelector("#tasks-section"),
+  };
+  const labelSymbols = {
     Feature: "&#8865;",
     "Low Priority Bug": "&#9737;",
     "High Priority Bug": "&#9888;",
   };
-
   const labelClass = {
     Feature: "feature",
     "Low Priority Bug": "low-priority",
     "High Priority Bug": "high-priority",
   };
+  const tasks = {};
 
-  function createTask() {
-    const tasksSection = document.querySelector("#tasks-section");
-    const formData = getFormData();
+  selections.deleteTaskBtn.addEventListener("click", deleteTask);
+  selections.createTaskBtn.addEventListener("click", createTask);
 
-    if (formData === null) {
+  function deleteTask(e) {
+    const id = inputs.id.value;
+    console.log(id);
+    const elementForDelete = document.querySelector(`#${id}`);
+
+    elementForDelete.remove();
+    delete tasks[id];
+
+    selections.form.reset();
+    changeInputWritability();
+    selections.deleteTaskBtn.disabled = true;
+    selections.createTaskBtn.disabled = false;
+
+    updateTotalPoints();
+  }
+
+  function createTask(e) {
+    e.preventDefault();
+    const task = {
+      id: `task-${Object.keys(tasks).length + 1}`,
+      title: inputs.title.value,
+      description: inputs.description.value,
+      label: inputs.label.value,
+      points: Number(inputs.points.value),
+      assignee: inputs.assignee.value,
+    };
+
+    if (Object.values(task).some((input) => !input)) {
       return;
     }
 
-    let articleNumber = tasksSection.children.length - 1;
-    const taskArticle = createAndFillTaskArticle(formData, articleNumber);
-    tasksSection.appendChild(taskArticle);
+    tasks[task.id] = task;
+    const taskArticle = createAndFillTaskArticle(task);
+    selections.tasksSection.appendChild(taskArticle);
 
-    const buttonDiv = createDomElement("div", "", "task-card-actions");
-    taskArticle.appendChild(buttonDiv);
-    const delBtn = document.createElement("button");
-    delBtn.innerText = "Delete";
-    buttonDiv.appendChild(delBtn);
+    const btnDiv = createDomElement("div", null, "task-card-actions");
+    const delBtn = createDomElement("button", "Delete");
+    btnDiv.appendChild(delBtn);
+    taskArticle.appendChild(btnDiv);
+
+    updateTotalPoints();
 
     delBtn.addEventListener("click", loadConfirmDelete);
 
-    form.reset();
-    updateTotalPoints();
-  }
+    selections.form.reset();
 
-  function deleteTask() {
-    const taskId = document.querySelector("#task-id").value;
-    const taskForRemove = document.querySelector(`#${taskId}`);
-    const tasksSection = document.querySelector("#tasks-section");
-    tasksSection.removeChild(taskForRemove);
-    form.reset();
-    changeInputWritability(false);
-    deleteTaskBtn.disabled = true;
-    createTaskBtn.disabled = false;
+    function loadConfirmDelete() {
+      Object.entries(inputs).forEach(([key, input]) => {
+        input.value = task[key];
+        input.disabled = true;
+      });
 
-    updateTotalPoints();
-  }
-
-  function loadConfirmDelete(e) {
-    if (inputs.title.value) {
-      return;
+      selections.deleteTaskBtn.disabled = false;
+      selections.createTaskBtn.disabled = true;
     }
-
-    let articleForDel = e.currentTarget.parentElement.parentElement;
-    fillFormDataForDelete(articleForDel);
-
-    changeInputWritability(true);
-    deleteTaskBtn.disabled = false;
-    createTaskBtn.disabled = true;
   }
 
-  function createAndFillTaskArticle(formData, articleNumber) {
-    const taskArticle = createDomElement("article", "", "task-card");
-    taskArticle.id = `task-${articleNumber}`;
+  function createAndFillTaskArticle(task) {
+    const taskArticle = createDomElement("article", null, "task-card");
+    taskArticle.id = task.id;
     taskArticle.appendChild(
       createDomElement(
         "div",
-        `${formData.label} ${labelSymbol[formData.label]}`,
+        `${task.label} ${labelSymbols[task.label]}`,
         "task-card-label",
-        labelClass[formData.label]
+        labelClass[task.label]
       )
     );
     taskArticle.appendChild(
-      createDomElement("h3", formData.title, "task-card-title")
+      createDomElement("h3", task.title, "task-card-title")
     );
     taskArticle.appendChild(
-      createDomElement("p", formData.description, "task-card-description")
+      createDomElement("p", task.description, "task-card-description")
     );
     taskArticle.appendChild(
       createDomElement(
         "div",
-        `Estimated at ${formData.points} pts`,
+        `Estimated at ${task.points} pts`,
         "task-card-points"
       )
     );
     taskArticle.appendChild(
       createDomElement(
         "div",
-        `Assigned to: ${formData.assignee}`,
+        `Assigned to: ${task.assignee}`,
         "task-card-assignee"
       )
     );
@@ -116,63 +126,26 @@ function solve() {
     Object.values(inputs).forEach((input) => (input.disabled = value));
   }
 
-  function fillFormDataForDelete(articleForDel) {
-    inputs.title.value =
-      articleForDel.querySelector(".task-card-title").textContent;
-    inputs.description.value = articleForDel.querySelector(
-      ".task-card-description"
-    ).textContent;
-
-    const labelContent =
-      articleForDel.querySelector(".task-card-label").textContent;
-    const label = labelContent.split(" ");
-    label.pop();
-    inputs.lable.value = label.join(" ");
-
-    const pointsContent = articleForDel
-      .querySelector(".task-card-points")
-      .textContent.split(" ");
-    const points = pointsContent[2].substring(length - 3);
-    inputs.points.value = Number(points);
-
-    const assignee = articleForDel
-      .querySelector(".task-card-assignee")
-      .textContent.split(": ")[1];
-    inputs.assignee.value = assignee;
-
-    document.querySelector("#task-id").value = articleForDel.id;
-  }
-
   function createDomElement(type, content, ...classes) {
     const element = document.createElement(type);
-    element.classList.add(...classes);
-    if (classes.includes("task-card-label")) {
+    if (classes && classes.length > 0) {
+      element.classList.add(...classes);
+    }
+
+    if (content && classes.includes("task-card-label")) {
       element.innerHTML = content;
-    } else {
+    } else if (content) {
       element.textContent = content;
     }
 
     return element;
   }
 
-  function getFormData() {
-    const formData = {};
-
-    formData.title = inputs.title.value;
-    formData.description = inputs.description.value;
-    formData.label = inputs.lable.value;
-    formData.points = inputs.points.value;
-    formData.assignee = inputs.assignee.value;
-
-    return Object.values(formData).some((value) => !value) ? null : formData;
-  }
-
   function updateTotalPoints() {
     const totalPointsP = document.querySelector("#total-sprint-points");
 
-    const pointDivs = document.querySelectorAll(".task-card-points");
-    let totalPoints = Array.from(pointDivs).reduce((acc, curr) => {
-      acc += Number(curr.textContent.split(" ")[2]);
+    let totalPoints = Object.values(tasks).reduce((acc, curr) => {
+      acc += curr.points;
       return acc;
     }, 0);
 
